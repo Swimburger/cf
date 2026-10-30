@@ -1,5 +1,38 @@
 # cf
 
+## 1.0.0-beta.27
+
+### Patch Changes
+
+- cde5fa3: Explain how account-or-zone commands pick their scope
+
+  Commands that serve either an account or a zone, such as `cf rulesets list`
+  and `cf load-balancers account list`, now say in `--help` that they run
+  against your account unless you pass `--zone`, and that they ignore
+  `CLOUDFLARE_ZONE_ID`.
+
+- edc13df: Prepare generated commands to preserve audio API responses
+
+  Recognize `audio/*` responses as binary data in the command generator and its
+  operation descriptors, including schemas without `format: binary`. Future commands
+  generated for audio endpoints will write the exact bytes to stdout so they can be
+  redirected to a file. No commands generated from the currently pinned OpenAPI
+  specification declare audio responses, so this change does not alter the behavior
+  of any currently shipped command.
+
+- cde5fa3: Reject `--zone` without a value
+
+  An empty `--zone` used to fall back to `CLOUDFLARE_ZONE_ID`, and `--dry-run`
+  previewed a `/zones//` path. On commands that serve both an account and a
+  zone, it also switched to zone scope. cf now stops with
+  `--zone requires a non-empty value.` and, as with `--mode`, rejects a repeated
+  `--zone`.
+
+  Commands that forward arguments, such as `cf containers ssh`, used to drop a
+  `-z` with no value, so `cf containers ssh <id> ls -z` ran plain `ls`. That now
+  stops with the same error. Put forwarded arguments after `--`, as in
+  `cf containers ssh <id> -- ls -z`.
+
 ## 1.0.0-beta.26
 
 ### Minor Changes
